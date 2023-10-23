@@ -13,6 +13,8 @@
 
 
 ### Instalar este pacote
+OBS: Ao testar fora da Jetson, utilizar o Python 3.8.2, padrão do Ubuntu 20.04
+
 - Abrir o terminal e digitar:
 ```
 git clone https://github.com/gustavo-fardo/jetson_yolo_sensor.git
