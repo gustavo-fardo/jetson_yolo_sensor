@@ -1,7 +1,7 @@
 ultralytics
 torch
 numpy
-cv2
+opencv-python
 time
 supervision
 serial
