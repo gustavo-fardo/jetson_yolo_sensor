@@ -23,8 +23,13 @@ cd jetson_yolo_sensor/
 pip install -r requirements.txt
 ```
 ## Execução
-- No terminal:
+- Com parâmetros padrão:
 ```
 cd jetson_yolo_sensor/
 python yolov8_serial.py
+```
+- Com parâmetros personalizados (todos opcionais):
+```
+cd jetson_yolo_sensor/
+python yolov8_serial.py --model_path <caminho do modelo> --serial-port <caminho da porta serial> --baudrate <valor do baudrate> --capture-index <caminho do video para teste (ou 0 para camera)>
 ```
