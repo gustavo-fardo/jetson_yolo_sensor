@@ -1,0 +1,7 @@
+ultralytics
+torch
+numpy
+cv2
+time
+supervision
+serial
