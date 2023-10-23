@@ -41,27 +41,22 @@ class ObjectDetection:
 
     def plot_bboxes(self, results, frame):
         
-	byte_string = f"{time()}".encode('utf-8')
-    	serial_port.write(byte_string)
+        byte_string = f"{time()}".encode('utf-8')
+        serial_port.write(byte_string)
         print(byte_string)
 
         # Extract detections for person class
         for result in results:
             boxes = result.boxes.cpu().numpy()
             class_id = boxes.cls[0]
-           
-	    xyxy = result.boxes.xyxy.cpu().numpy()
-	    conf = result.boxes.conf.cpu().numpy()
-	    cls = result.boxes.cls.cpu().numpy().astype(int)
-	     
-	    byte_string = f"{xyxy} {conf} {cls}".encode('utf-8')
-            print(byte_string)
-	    serial_port.write(byte_string)
-	    
-	    xyxys.append(xyxy)
-	    confidences.append(conf)
-	    class_ids.append(cls)
             
+        xyxy = result.boxes.xyxy.cpu().numpy()
+        conf = result.boxes.conf.cpu().numpy()
+        cls = result.boxes.cls.cpu().numpy().astype(int)
+            
+        byte_string = f"{xyxy} {conf} {cls}".encode('utf-8')
+        print(byte_string)
+        serial_port.write(byte_string)   
         
         # Setup detections for visualization
         detections = sv.Detections(
@@ -93,7 +88,10 @@ class ObjectDetection:
             assert ret
             
             results = self.predict(frame)
-            frame = self.plot_bboxes(results, frame)      
+            frame = self.plot_bboxes(results, frame)
+
+            if cv2.waitKey(5) & 0xFF == 27:
+                break      
         
         cap.release()
         cv2.destroyAllWindows()
