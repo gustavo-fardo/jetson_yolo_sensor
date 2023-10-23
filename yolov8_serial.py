@@ -73,8 +73,6 @@ class ObjectDetection:
         
         return frame
     
-    
-    
     def __call__(self):
 
         cap = cv2.VideoCapture(self.capture_index)
