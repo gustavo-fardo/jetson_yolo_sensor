@@ -4,4 +4,4 @@ numpy
 opencv-python
 time
 supervision
-serial
+pyserial

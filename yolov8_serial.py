@@ -1,12 +1,10 @@
 import torch
-import numpy as np
+import numpy
 import cv2
 from time import time
 from ultralytics import YOLO
-
-import supervision as sv
 import serial
-
+import argparse
 
 class ObjectDetection:
 
@@ -24,7 +22,7 @@ class ObjectDetection:
         self.serial_port = serial_port
     
 
-    def load_model(self):
+    def load_model(self, model_path):
        
         model = YOLO(model_path)  # load a pretrained YOLOv8n model
         model.fuse()
@@ -37,41 +35,22 @@ class ObjectDetection:
         results = self.model(frame)
         
         return results
-    
 
-    def plot_bboxes(self, results, frame):
+    def plot_bboxes(self, results):
         
         byte_string = f"{time()}".encode('utf-8')
         serial_port.write(byte_string)
-        print(byte_string)
 
         # Extract detections for person class
-        for result in results:
-            boxes = result.boxes.cpu().numpy()
-            class_id = boxes.cls[0]
+
+        for result in results[0].boxes.cpu().numpy():
             
-        xyxy = result.boxes.xyxy.cpu().numpy()
-        conf = result.boxes.conf.cpu().numpy()
-        cls = result.boxes.cls.cpu().numpy().astype(int)
-            
-        byte_string = f"{xyxy} {conf} {cls}".encode('utf-8')
-        print(byte_string)
-        serial_port.write(byte_string)   
-        
-        # Setup detections for visualization
-        detections = sv.Detections(
-                    xyxy=results[0].boxes.xyxy.cpu().numpy(),
-                    confidence=results[0].boxes.conf.cpu().numpy(),
-                    class_id=results[0].boxes.cls.cpu().numpy().astype(int),
-                    )
-        
-    
-        # Format custom labels
-        self.labels = [f"{self.CLASS_NAMES_DICT[class_id]} {confidence:0.2f}"
-        for _, _, confidence, class_id, tracker_id
-        in detections]
-        
-        return frame
+            xyxy = result.xyxy[0]
+            conf = result.conf[0]
+            cls = self.CLASS_NAMES_DICT[result.cls[0].astype(int)]
+                
+            byte_string = f"{xyxy}, {conf}, {cls}".encode('utf-8')
+            serial_port.write(byte_string)   
     
     def __call__(self):
 
@@ -86,7 +65,7 @@ class ObjectDetection:
             assert ret
             
             results = self.predict(frame)
-            frame = self.plot_bboxes(results, frame)
+            frame = self.plot_bboxes(results)
 
             if cv2.waitKey(5) & 0xFF == 27:
                 break      
@@ -95,7 +74,15 @@ class ObjectDetection:
         cv2.destroyAllWindows()
         serial_port.close()
         
+parser = argparse.ArgumentParser(description='Implementação do YOLOv8 que comunica pela porta serial')
+parser.add_argument('--model-path', type=str, default='RedeCopel/runs/detect/train/weights/best.pt', help='caminho do modelo pre-treinado')
+parser.add_argument('--capture-index', type=str, default="videos/inspecao_4.MP4", help='caminho do video para teste (ou 0 para captura da camera)')
+parser.add_argument('--serial-port', type=str, default=None, help='porta serial escolhida para comunicação')
+parser.add_argument('--baudrate', type=int, default=9600, help='baudrate da comunicação serial')
         
-serial_port = serial.Serial()
-detector = ObjectDetection(capture_index="inspecao_5.MP4", model="runs/detect/train3/weights/best.pt", serial_port=serial_port)
+args = parser.parse_args()
+
+serial_port = serial.Serial(port=args.serial_port, baudrate=args.baudrate)
+detector = ObjectDetection(capture_index=args.capture_index, model_path=args.model_path, serial_port=serial_port)
 detector()
+
