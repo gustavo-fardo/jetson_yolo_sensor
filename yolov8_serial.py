@@ -1,10 +1,10 @@
 import torch
-import numpy
 import cv2
 from time import time
 from ultralytics import YOLO
 import serial
 import argparse
+import supervision as sv
 
 class ObjectDetection:
 
@@ -36,21 +36,41 @@ class ObjectDetection:
         
         return results
 
-    def plot_bboxes(self, results):
+    def plot_bboxes(self, frame, results):
         
         byte_string = f"{time()}".encode('utf-8')
         serial_port.write(byte_string)
 
         # Extract detections for person class
 
-        for result in results[0].boxes.cpu().numpy():
-            
+        for result in results[0].boxes.cpu().numpy():    
             xyxy = result.xyxy[0]
             conf = result.conf[0]
             cls = self.CLASS_NAMES_DICT[result.cls[0].astype(int)]
                 
             byte_string = f"{xyxy}, {conf}, {cls}".encode('utf-8')
             serial_port.write(byte_string)   
+
+        if args.show_detection:
+            # Create annotator object
+            box_annotator = sv.BoxAnnotator(sv.ColorPalette.default(), thickness=3, text_thickness=3, text_scale=1.5)
+
+            # Setup detections for visualization
+            detections = sv.Detections(
+                        xyxy=results[0].boxes.xyxy.cpu().numpy(),
+                        confidence=results[0].boxes.conf.cpu().numpy(),
+                        class_id=results[0].boxes.cls.cpu().numpy().astype(int),
+                        )
+            
+            # Format custom labels
+            self.labels = [f"{self.CLASS_NAMES_DICT[class_id]} {confidence:0.2f}"
+            for _, _, confidence, class_id, tracker_id
+            in detections]
+            
+            # Annotate and display frame
+            frame = box_annotator.annotate(scene=frame, detections=detections, labels=self.labels)
+
+            cv2.imshow('YOLOv8 Detection', frame)
     
     def __call__(self):
 
@@ -65,7 +85,7 @@ class ObjectDetection:
             assert ret
             
             results = self.predict(frame)
-            frame = self.plot_bboxes(results)
+            self.plot_bboxes(frame, results)
 
             if cv2.waitKey(5) & 0xFF == 27:
                 break      
@@ -75,10 +95,11 @@ class ObjectDetection:
         serial_port.close()
         
 parser = argparse.ArgumentParser(description='Implementação do YOLOv8 que comunica pela porta serial')
-parser.add_argument('--model-path', type=str, default='RedeCopel/runs/detect/train/weights/best.pt', help='caminho do modelo pre-treinado')
-parser.add_argument('--capture-index', type=str, default="videos/inspecao_4.MP4", help='caminho do video para teste (ou 0 para captura da camera)')
-parser.add_argument('--serial-port', type=str, default=None, help='porta serial escolhida para comunicação')
+parser.add_argument('--model-path', type=str, default='./best.pt', help='caminho do modelo pre-treinado')
+parser.add_argument('--capture-index', type=str, default=0, help='caminho do video para teste (ou 0 para captura da camera)')
+parser.add_argument('--serial-port', type=str, default="/dev/ttyS0", help='porta serial escolhida para comunicação')
 parser.add_argument('--baudrate', type=int, default=9600, help='baudrate da comunicação serial')
+parser.add_argument('--show-detection', type=bool, default=True, help='apresenta a deteccao na tela ou nao')
         
 args = parser.parse_args()
 
