@@ -33,5 +33,5 @@ python yolov8_serial.py
 - Com parâmetros personalizados (todos opcionais):
 ```
 cd jetson_yolo_sensor/
-python yolov8_serial.py --model_path <caminho do modelo> --serial-port <caminho da porta serial> --baudrate <valor do baudrate> --capture-index <caminho do video para teste (ou 0 para camera)>
+python yolov8_serial.py --model_path <caminho do modelo> --serial-port <caminho da porta serial> --baudrate <valor do baudrate> --capture-index <caminho do video para teste (ou 0 para camera)> --show-detection <True ou False, para mostrar ou não deteccao em uma janela>
 ```
