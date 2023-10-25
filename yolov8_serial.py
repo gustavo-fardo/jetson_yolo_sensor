@@ -51,7 +51,7 @@ class ObjectDetection:
             byte_string = f"{xyxy}, {conf}, {cls}".encode('utf-8')
             serial_port.write(byte_string)   
 
-        if args.show_detection:
+        if args.show_detection == True:
             # Create annotator object
             box_annotator = sv.BoxAnnotator(sv.ColorPalette.default(), thickness=3, text_thickness=3, text_scale=1.5)
 
@@ -93,17 +93,26 @@ class ObjectDetection:
         cap.release()
         cv2.destroyAllWindows()
         serial_port.close()
+
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
         
 parser = argparse.ArgumentParser(description='Implementação do YOLOv8 que comunica pela porta serial')
 parser.add_argument('--model-path', type=str, default='./best.pt', help='caminho do modelo pre-treinado')
 parser.add_argument('--capture-index', type=str, default=0, help='caminho do video para teste (ou 0 para captura da camera)')
 parser.add_argument('--serial-port', type=str, default="/dev/ttyS0", help='porta serial escolhida para comunicação')
 parser.add_argument('--baudrate', type=int, default=9600, help='baudrate da comunicação serial')
-parser.add_argument('--show-detection', type=bool, default=True, help='apresenta a deteccao na tela ou nao')
+parser.add_argument('--show-detection', type=str2bool, default=True, help='apresenta a deteccao na tela ou nao')
         
 args = parser.parse_args()
 
 serial_port = serial.Serial(port=args.serial_port, baudrate=args.baudrate)
 detector = ObjectDetection(capture_index=args.capture_index, model_path=args.model_path, serial_port=serial_port)
 detector()
-
