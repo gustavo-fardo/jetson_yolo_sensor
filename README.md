@@ -13,7 +13,7 @@
 
 
 ### Instalar este pacote
-OBS: Ao testar fora da Jetson, utilizar o Python 3.8.2, padrão do Ubuntu 20.04
+OBS: Ao testar fora da Jetson, utilizar o Python 3.8.10, padrão do Ubuntu 20.04
 
 - Abrir o terminal e digitar:
 ```
@@ -23,6 +23,7 @@ git clone https://github.com/gustavo-fardo/jetson_yolo_sensor.git
 ```
 cd jetson_yolo_sensor/
 pip install -r requirements.txt
+sudo apt install libgtk2.0-dev
 ```
 ## Execução
 - Com parâmetros padrão:
