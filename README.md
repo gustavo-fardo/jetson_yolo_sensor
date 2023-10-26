@@ -6,14 +6,14 @@
 -   Fazer o download da imagem JetsonNanoUb20_3b.img.xz (8.7 GByte!) do [Sync](https://ln5.sync.com/dl/403a73c60/bqppm39m-mh4qippt-u5mhyyfi-nnma8c4t/view/default/14418794280004)
 -   Fazer o flash da imagem no cartão SD com o [balenaEtcher](https://etcher.balena.io/)
 
-  **OBS: fazer o flash com a imagem compactada, não descompactar**
+  ***OBS: fazer o flash com a imagem compactada, não descompactar***
 - Inserir o cartão SD na Jetson Nano
 - Acessar com a senha *jetson*. Não é necessário configurar usuários, idiomas, etc.
 
 
 
 ### Instalar este pacote
-**OBS: Ao testar fora da Jetson, utilizar o Python 3.8.10, padrão do Ubuntu 20.04**
+***OBS: Ao testar fora da Jetson, utilizar o Python 3.8.10, padrão do Ubuntu 20.04***
 
 - Abrir o terminal e digitar:
 ```
