@@ -48,7 +48,7 @@ class ObjectDetection:
         
         self.capture_index = capture_index
        
-        self.device = 'cuda' if torch.cuda.is_available() else 'cpu
+        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         print("Using Device: ", self.device)
         
         self.model = self.load_model(model_path)
@@ -137,7 +137,7 @@ class ObjectDetection:
         """
         
         # Define Video Capture
-        cap = cv2.VideoCapture(self.capture_index)
+        cap = cv2.VideoCapture(self.capture_index, cv2.CAP_GSTREAMER)
         # Check if the video is available
         assert cap.isOpened()
         # Define camera frame resolution dimensions
@@ -159,6 +159,40 @@ class ObjectDetection:
         cv2.destroyAllWindows()
         serial_port.close()
 
+
+def gstreamer_pipeline(
+    sensor_id=0,
+    capture_width=1920,
+    capture_height=1080,
+    display_width=960,
+    display_height=540,
+    framerate=30,
+    flip_method=0,
+    ):
+    """ 
+    gstreamer_pipeline returns a GStreamer pipeline for capturing from the CSI camera
+    Flip the image by setting the flip_method (most common values: 0 and 2)
+    display_width and display_height determine the size of each camera pane in the window on the screen
+    Default 1920x1080 displayd in a 1/4 size window
+    """
+    return (
+        "nvarguscamerasrc sensor-id=%d ! "
+        "video/x-raw(memory:NVMM), width=(int)%d, height=(int)%d, framerate=(fraction)%d/1 ! "
+        "nvvidconv flip-method=%d ! "
+        "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
+        "videoconvert ! "
+        "video/x-raw, format=(string)BGR ! appsink"
+        % (
+            sensor_id,
+            capture_width,
+            capture_height,
+            framerate,
+            flip_method,
+            display_width,
+            display_height,
+        )
+    )
+
 def str2bool(v):
     """
     Checks if a string is a variation of False or True and outputs the bool value
@@ -179,7 +213,7 @@ def str2bool(v):
 # Create argument parser
 parser = argparse.ArgumentParser(description='Implementação do YOLOv8 que comunica pela porta serial')
 parser.add_argument('--model-path', type=str, default='./best.pt', help='caminho do modelo pre-treinado')
-parser.add_argument('--capture-index', type=str, default=0, help='caminho do video para teste (ou 0 para captura da camera)')
+parser.add_argument('--capture-index', type=str, default=gstreamer_pipeline(flip_method=0), help='caminho do video para teste (ou 0 para captura da camera)')
 parser.add_argument('--serial-port', type=str, default="/dev/ttyS0", help='porta serial escolhida para comunicação')
 parser.add_argument('--baudrate', type=int, default=9600, help='baudrate da comunicação serial')
 parser.add_argument('--show-detection', type=str2bool, default=True, help='apresenta a deteccao na tela ou nao')
