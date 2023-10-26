@@ -29,7 +29,7 @@ sudo apt install libgtk2.0-dev
 - Com parâmetros padrão:
 ```
 cd jetson_yolo_sensor/
-python yolov8_serial.py
+python3 yolov8_serial.py
 ```
 - Com parâmetros personalizados (todos opcionais):
     - Detalhamento de cada parâmetro:
@@ -43,5 +43,5 @@ python yolov8_serial.py
     - Rodar com parâmetros escolhidos
       ```
       cd jetson_yolo_sensor/
-      python yolov8_serial.py --<nome parâmetro 1> <valor parâmetro 1> --<nome parâmetro 2> <valor parâmetro 2> ...
+      python3 yolov8_serial.py --<nome parâmetro 1> <valor parâmetro 1> --<nome parâmetro 2> <valor parâmetro 2> ...
       ```
