@@ -13,7 +13,7 @@
 
 
 ### Instalar este pacote
-OBS: Ao testar fora da Jetson, utilizar o Python 3.8.10, padrão do Ubuntu 20.04
+**OBS: Ao testar fora da Jetson, utilizar o Python 3.8.10, padrão do Ubuntu 20.04**
 
 - Abrir o terminal e digitar:
 ```
@@ -32,7 +32,16 @@ cd jetson_yolo_sensor/
 python yolov8_serial.py
 ```
 - Com parâmetros personalizados (todos opcionais):
-```
-cd jetson_yolo_sensor/
-python yolov8_serial.py --model_path <caminho do modelo> --serial-port <caminho da porta serial> --baudrate <valor do baudrate> --capture-index <caminho do video para teste (ou 0 para camera)> --show-detection <True ou False, para mostrar ou não deteccao em uma janela>
-```
+    - Detalhamento de cada parâmetro:
+      ```
+      --model_path <caminho do modelo>
+      --serial-port <caminho da porta serial>
+      --baudrate <valor do baudrate>
+      --capture-index <caminho do video para teste | 'csi' para csi-camera | 0 para camera usb)>
+      --show-detection <True ou False, para mostrar ou não deteccao em uma janela>
+      ```
+    - Rodar com parâmetros escolhidos
+      ```
+      cd jetson_yolo_sensor/
+      python yolov8_serial.py --<nome parâmetro 1> <valor parâmetro 1> --<nome parâmetro 2> <valor parâmetro 2> ...
+      ```
