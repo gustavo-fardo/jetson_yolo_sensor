@@ -137,7 +137,11 @@ class ObjectDetection:
         """
         
         # Define Video Capture
-        cap = cv2.VideoCapture(self.capture_index, cv2.CAP_GSTREAMER)
+        if self.capture_index == 'csi':
+            cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
+        else:
+            cap = cv2.VideoCapture(self.capture_index)
+            
         # Check if the video is available
         assert cap.isOpened()
         # Define camera frame resolution dimensions
@@ -213,7 +217,7 @@ def str2bool(v):
 # Create argument parser
 parser = argparse.ArgumentParser(description='Implementação do YOLOv8 que comunica pela porta serial')
 parser.add_argument('--model-path', type=str, default='./best.pt', help='caminho do modelo pre-treinado')
-parser.add_argument('--capture-index', type=str, default=gstreamer_pipeline(flip_method=0), help='caminho do video para teste (ou 0 para captura da camera)')
+parser.add_argument('--capture-index', type=str, default='csi', help='caminho do video para teste | \'csi\' para csi-camera | 0 para captura da camera)')
 parser.add_argument('--serial-port', type=str, default="/dev/ttyS0", help='porta serial escolhida para comunicação')
 parser.add_argument('--baudrate', type=int, default=9600, help='baudrate da comunicação serial')
 parser.add_argument('--show-detection', type=str2bool, default=True, help='apresenta a deteccao na tela ou nao')
