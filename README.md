@@ -37,8 +37,8 @@ python3 yolov8_serial.py
       --model_path <caminho do modelo>
       --serial-port <caminho da porta serial>
       --baudrate <valor do baudrate>
-      --capture-index <caminho do video para teste | 'csi' para csi-camera | 0 para camera usb)>
-      --show-detection <True ou False, para mostrar ou não deteccao em uma janela>
+      --capture-index <caminho do vídeo para teste | 'csi' para csi-camera | 0 para câmera usb)>
+      --show-detection <True ou False, para mostrar ou não detecção em uma janela>
       ```
     - Rodar com parâmetros escolhidos
       ```
