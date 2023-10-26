@@ -22,7 +22,7 @@ git clone https://github.com/gustavo-fardo/jetson_yolo_sensor.git
 - Instalar as dependências:
 ```
 cd jetson_yolo_sensor/
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 sudo apt install libgtk2.0-dev
 ```
 ## Execução
