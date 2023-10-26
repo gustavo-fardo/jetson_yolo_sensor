@@ -141,12 +141,12 @@ class ObjectDetection:
             cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
         else:
             cap = cv2.VideoCapture(self.capture_index)
+            # Define camera frame resolution dimensions
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
             
         # Check if the video is available
         assert cap.isOpened()
-        # Define camera frame resolution dimensions
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
       
         while True:
             ret, frame = cap.read()     # Retrieved flag, image frame
