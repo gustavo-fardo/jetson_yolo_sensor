@@ -139,6 +139,11 @@ class ObjectDetection:
         # Define Video Capture
         if self.capture_index == 'csi':
             cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
+        elif int(self.capture_index) == 0:
+            cap = cv2.VideoCapture(0)
+            # Define camera frame resolution dimensions
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
         else:
             cap = cv2.VideoCapture(self.capture_index)
             # Define camera frame resolution dimensions
