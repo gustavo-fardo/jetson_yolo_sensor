@@ -149,22 +149,39 @@ class ObjectDetection:
             # Define camera frame resolution dimensions
             cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
             cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-            
-        # Check if the video is available
-        assert cap.isOpened()
-      
-        while True:
-            ret, frame = cap.read()     # Retrieved flag, image frame
-            assert ret
-            
-            results = self.predict(frame)
-            self.plot_bboxes(frame, results)
 
-            # Break loop with ctrl c
-            if cv2.waitKey(5) & 0xFF == 27:
-                break      
+        if self.capture_index != 'file':
+
+            # Check if the video is available
+            assert cap.isOpened()
         
-        cap.release()
+            while True:
+                ret, frame = cap.read()     # Retrieved flag, image frame
+                assert ret
+                
+                results = self.predict(frame)
+                self.plot_bboxes(frame, results)
+
+                # Break loop with ctrl c
+                if cv2.waitKey(5) & 0xFF == 27:
+                    break      
+            
+            cap.release()
+
+        else:  # capture_index is a image file
+             while True:
+                frame = cv2.imread(args.image_path, cv2.IMREAD_COLOR)     # Retrieved flag, image frame
+                if frame is None:
+                    print ('Error opening image.\n')
+                    break
+
+                results = self.predict(frame)
+                self.plot_bboxes(frame, results)
+
+                # Break loop with ctrl c
+                if cv2.waitKey(5) & 0xFF == 27:
+                    break      
+            
         cv2.destroyAllWindows()
         serial_port.close()
 
@@ -222,10 +239,11 @@ def str2bool(v):
 # Create argument parser
 parser = argparse.ArgumentParser(description='Implementação do YOLOv8 que comunica pela porta serial')
 parser.add_argument('--model-path', type=str, default='./best.pt', help='caminho do modelo pre-treinado')
-parser.add_argument('--capture-index', type=str, default='csi', help='caminho do video para teste | \'csi\' para csi-camera | 0 para captura da camera)')
+parser.add_argument('--capture-index', type=str, default='csi', help='caminho do video para teste | \'csi\' para csi-camera | 0 para captura da camera | \'file\' para ler um arquivo)')
 parser.add_argument('--serial-port', type=str, default="/dev/ttyS0", help='porta serial escolhida para comunicação')
 parser.add_argument('--baudrate', type=int, default=9600, help='baudrate da comunicação serial')
 parser.add_argument('--show-detection', type=str2bool, default=True, help='apresenta a deteccao na tela ou nao')
+parser.add_argument('--image-path', type=str, default=None, help='caminho da imagem a ser analisada (só vale em capture-index == \'file\')')
 
 # Parse arguments from terminal
 args = parser.parse_args()
