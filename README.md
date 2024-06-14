@@ -44,7 +44,7 @@ python3 yolov8_serial.py --capture-index file --image-path <caminho da imagem>.b
       --baudrate <valor do baudrate>
       --capture-index <caminho do vídeo para teste | 'csi' para csi-camera | 0 para câmera usb | 'file' para ler um arquivo>
       --show-detection <True ou False, para mostrar ou não detecção em uma janela>
-      --image-path <caminho da imagem a ser analisada (só vale em capture-index == file>
+      --image-path <caminho da imagem a ser analisada (só vale em capture-index == file)>
       ```
     - Rodar com parâmetros escolhidos
       ```
