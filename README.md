@@ -31,14 +31,20 @@ sudo apt install libgtk2.0-dev
 cd jetson_yolo_sensor/
 python3 yolov8_serial.py
 ```
+- Com leitura de arquivo de imagem:
+```
+cd jetson_yolo_sensor/
+python3 yolov8_serial.py --capture-index file --image-path <caminho da imagem>.bmp
+```
 - Com parâmetros personalizados (todos opcionais):
     - Detalhamento de cada parâmetro:
       ```
       --model_path <caminho do modelo>
       --serial-port <caminho da porta serial>
       --baudrate <valor do baudrate>
-      --capture-index <caminho do vídeo para teste | 'csi' para csi-camera | 0 para câmera usb)>
+      --capture-index <caminho do vídeo para teste | 'csi' para csi-camera | 0 para câmera usb | 'file' para ler um arquivo>
       --show-detection <True ou False, para mostrar ou não detecção em uma janela>
+      --image-path <caminho da imagem a ser analisada (só vale em capture-index == file>
       ```
     - Rodar com parâmetros escolhidos
       ```

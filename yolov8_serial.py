@@ -112,7 +112,7 @@ class ObjectDetection:
         # Shows detection image in a window if True
         if args.show_detection == True:
             # Create annotator object
-            box_annotator = sv.BoxAnnotator(sv.ColorPalette.default(), thickness=3, text_thickness=3, text_scale=1.5)
+            box_annotator = sv.BoxAnnotator(sv.ColorPalette.default(), thickness=2, text_thickness=1, text_scale=0.75)
 
             # Setup detections for visualization
             detections = sv.Detections(
@@ -120,7 +120,7 @@ class ObjectDetection:
                         confidence=results[0].boxes.conf.cpu().numpy(),
                         class_id=results[0].boxes.cls.cpu().numpy().astype(int),
                         )
-            
+
             # Format custom labels
             self.labels = [f"{self.CLASS_NAMES_DICT[class_id]} {confidence:0.2f}"
             for _, _, confidence, class_id, tracker_id
@@ -136,39 +136,7 @@ class ObjectDetection:
         Main function, opens video capture, sends image to prediction, formats and sends data for a frame through serial port
         """
         
-        # Define Video Capture
-        if self.capture_index == 'csi':
-            cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
-        elif int(self.capture_index) == 0:
-            cap = cv2.VideoCapture(0)
-            # Define camera frame resolution dimensions
-            cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-        else:
-            cap = cv2.VideoCapture(self.capture_index)
-            # Define camera frame resolution dimensions
-            cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-
-        if self.capture_index != 'file':
-
-            # Check if the video is available
-            assert cap.isOpened()
-        
-            while True:
-                ret, frame = cap.read()     # Retrieved flag, image frame
-                assert ret
-                
-                results = self.predict(frame)
-                self.plot_bboxes(frame, results)
-
-                # Break loop with ctrl c
-                if cv2.waitKey(5) & 0xFF == 27:
-                    break      
-            
-            cap.release()
-
-        else:  # capture_index is a image file
+        if self.capture_index == 'file':
              while True:
                 frame = cv2.imread(args.image_path, cv2.IMREAD_COLOR)     # Retrieved flag, image frame
                 if frame is None:
@@ -181,8 +149,38 @@ class ObjectDetection:
                 # Break loop with ctrl c
                 if cv2.waitKey(5) & 0xFF == 27:
                     break      
+        else:
+            # Define Video Capture
+            if self.capture_index == 'csi':
+                cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
+            elif int(self.capture_index) == 0:
+                cap = cv2.VideoCapture(0)
+                # Define camera frame resolution dimensions
+                cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+                cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+            else:
+                cap = cv2.VideoCapture(self.capture_index)
+                # Define camera frame resolution dimensions
+                cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+                cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
+                # Check if the video is available
+                assert cap.isOpened()
             
-        cv2.destroyAllWindows()
+                while True:
+                    ret, frame = cap.read()     # Retrieved flag, image frame
+                    assert ret
+                    
+                    results = self.predict(frame)
+                    self.plot_bboxes(frame, results)
+
+                    # Break loop with ctrl c
+                    if cv2.waitKey(5) & 0xFF == 27:
+                        break      
+                
+                cap.release()
+                cv2.destroyAllWindows()
+
         serial_port.close()
 
 
@@ -239,11 +237,11 @@ def str2bool(v):
 # Create argument parser
 parser = argparse.ArgumentParser(description='Implementação do YOLOv8 que comunica pela porta serial')
 parser.add_argument('--model-path', type=str, default='./best.pt', help='caminho do modelo pre-treinado')
-parser.add_argument('--capture-index', type=str, default='csi', help='caminho do video para teste | \'csi\' para csi-camera | 0 para captura da camera | \'file\' para ler um arquivo)')
+parser.add_argument('--capture-index', type=str, default='csi', help='caminho do video para teste | \'csi\' para csi-camera | 0 para captura da camera | \'file\' para ler um arquivo')
 parser.add_argument('--serial-port', type=str, default="/dev/ttyS0", help='porta serial escolhida para comunicação')
 parser.add_argument('--baudrate', type=int, default=9600, help='baudrate da comunicação serial')
 parser.add_argument('--show-detection', type=str2bool, default=True, help='apresenta a deteccao na tela ou nao')
-parser.add_argument('--image-path', type=str, default=None, help='caminho da imagem a ser analisada (só vale em capture-index == \'file\')')
+parser.add_argument('--image-path', type=str, default=None, help='caminho da imagem a ser analisada (só vale em capture-index == \'file\'')
 
 # Parse arguments from terminal
 args = parser.parse_args()
